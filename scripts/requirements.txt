@@ -1,0 +1,4 @@
+requests
+lxml
+beautifulsoup4
+# also requires poppler (pdftotext) on PATH
