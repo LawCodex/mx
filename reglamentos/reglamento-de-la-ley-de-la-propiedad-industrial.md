@@ -4,9 +4,10 @@ identifier: "Reg_LPI_161216"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2026-04-28
+date: 1994-11-23
 last_amended: 2016-12-16
 status: repealed
+abrogated: 2026-04-28
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LPI_161216.pdf"
 archived_copy: "https://web.archive.org/web/20241205111126/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LPI_161216.pdf"
 note: "Reglamento Abrogado Original DOF 23/11/1994 Reformas DOF 10/09/2002 , 19/09/2003 , 10/06/2011 , 16/12/2016"

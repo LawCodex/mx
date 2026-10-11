@@ -322,6 +322,8 @@ def front(it, title):
     if it.get("last_amended"):
         lines.append(f"last_amended: {it['last_amended']}")
     lines.append(f"status: {it['status']}")
+    if it.get("abrogated"):
+        lines.append(f"abrogated: {it['abrogated']}")
     lines.append(f"source: {yaml_str(it['source'])}")
     if it.get("wayback"):
         lines.append(f"archived_copy: {yaml_str(it['wayback'])}")

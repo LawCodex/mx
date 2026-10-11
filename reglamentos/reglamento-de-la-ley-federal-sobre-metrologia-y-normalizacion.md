@@ -4,9 +4,10 @@ identifier: "Reg_LFMN"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2026-09-04
+date: 1999-01-14
 last_amended: 2012-11-28
 status: repealed
+abrogated: 2026-09-04
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LFMN.pdf"
 archived_copy: "https://web.archive.org/web/20260309055424/https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LFMN.pdf"
 note: "Reglamento Abrogado Original DOF 14/01/1999 Reforma DOF 28/11/2012"

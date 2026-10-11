@@ -4,8 +4,8 @@ identifier: "Reg_LHidro"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2025-10-03
 status: repealed
+abrogated: 2025-10-03
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LHidro.pdf"
 archived_copy: "https://web.archive.org/web/20250621140724/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LHidro.pdf"
 note: "Reglamento Abrogado"

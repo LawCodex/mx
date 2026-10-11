@@ -4,8 +4,8 @@ identifier: "Reg_LIE"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2025-10-03
 status: repealed
+abrogated: 2025-10-03
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LIE.pdf"
 archived_copy: "https://web.archive.org/web/20241122063842/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LIE.pdf"
 note: "Reglamento Abrogado"

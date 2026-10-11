@@ -4,8 +4,8 @@ identifier: "Reg_LTE_040517"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2025-10-03
 status: repealed
+abrogated: 2025-10-03
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LTE_040517.pdf"
 archived_copy: "https://web.archive.org/web/20240828105524/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LTE_040517.pdf"
 note: "Reglamento Abrogado"

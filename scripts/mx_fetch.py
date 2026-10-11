@@ -79,6 +79,7 @@ def parse_laws(html):
         ref = tds[1].find("a", href=True)
         last = clean(tds[2].get_text(" "))
         num = clean(tds[0].get_text(" "))
+        status = "repealed" if re.search(r"abrogad", note + " " + title, re.I) and num.isalpha() else "in_force"
         first = title.split()[0].upper()
         if first.startswith("CONSTITUCI"):
             cat, typ = "constitucion", "constitution"
@@ -90,10 +91,11 @@ def parse_laws(html):
             cat, typ = "decretos", "decree"
         else:
             cat, typ = "leyes", "law"
-        status = "repealed" if re.search(r"abrogad", note + " " + title, re.I) and num.isalpha() else "in_force"
         out.append({
             "list": "leyes", "num": num, "title": title, "note": note, "category": cat, "type": typ,
-            "date": iso(note), "last_amended_text": last, "last_amended": iso(last) if "DOF" in last else None,
+            "date": iso(note), "last_amended_text": last,
+            "last_amended": iso(last) if "DOF" in last and status == "in_force" else None,
+            "abrogated": iso(last) if status == "repealed" else None,
             "file": pdf[0], "doc": doc[0] if doc else None,
             "ref": ref["href"] if ref and not ref["href"].lower().startswith(("pdf/", "doc/")) else None,
             "status": status,
@@ -119,14 +121,19 @@ def parse_regs(html):
         reforms = [iso(a.get_text(" ")) for p in tds[1].find_all("p") if "Reforma" in p.get_text()
                    for a in p.find_all("a")]
         reforms = sorted(r for r in reforms if r)
+        note = " ".join(ps[1:])
+        repealed = num.isalpha() or bool(re.search(r"\babrogad", note, re.I))
+        col = iso(tds[2].get_text(" "))
+        orig = re.search(r"Original\s+DOF\s+(\d{1,2}/\d{1,2}/\d{4})", note)
         out.append({
-            "list": "reglamentos", "num": num, "title": title, "note": " ".join(ps[1:]),
+            "list": "reglamentos", "num": num, "title": title, "note": note,
             "category": "reglamentos", "type": "regulation",
-            "date": iso(tds[2].get_text(" ")),
+            "date": (iso(orig.group(1)) if orig else None) if repealed else col,
+            "abrogated": col if repealed else None,
             "last_amended_text": "DOF " + reforms[-1] if reforms else "",
             "last_amended": reforms[-1] if reforms else None,
             "file": pdf[0], "doc": doc[0] if doc else None, "ref": None,
-            "status": "repealed" if num.isalpha() else "in_force",
+            "status": "repealed" if repealed else "in_force",
         })
     return out
 

@@ -72,7 +72,9 @@ capture actually used, `retrieved`) followed by the text:
   the reglamentos listed by the Chamber; historical (abrogated) laws in LeyesBiblio's *Leyes
   abrogadas* and *Reglamentos abrogados* pages; the reform history (individual reform decrees as
   published in the DOF).
-- Entries whose PDF could not be obtained:
+- Entries whose PDF could not be obtained (the Wayback Machine holds no capture of the file —
+  mostly regulations issued in 2025–2026; they will be picked up by re-running the scripts
+  from a network that can reach the origin):
 
 {{MISSING}}
 

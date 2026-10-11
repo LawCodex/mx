@@ -7,6 +7,7 @@ language: es
 date: 1992-12-29
 last_amended: 2021-03-22
 status: repealed
+abrogated: 2026-05-22
 source: "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFC.pdf"
 archived_copy: "https://web.archive.org/web/20260906022735/https://www.diputados.gob.mx/LeyesBiblio/pdf/LFC.pdf"
 note: "DOF 29/12/1992 Ley Abrogada"

@@ -4,9 +4,10 @@ identifier: "Reg_LGS_MPSS_171214"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2026-01-15
+date: 2004-04-05
 last_amended: 2014-12-17
 status: repealed
+abrogated: 2026-01-15
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LGS_MPSS_171214.pdf"
 archived_copy: "https://web.archive.org/web/20250804034404/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LGS_MPSS_171214.pdf"
 note: "Reglamento Abrogado Original DOF 05/04/2004 Reformas DOF 13/11/2008 , 08/06/2011 , 17/12/2014"

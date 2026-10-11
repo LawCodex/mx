@@ -4,9 +4,10 @@ identifier: "Reg_LPM_090215"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2025-12-03
+date: 2014-10-31
 last_amended: 2015-02-09
 status: repealed
+abrogated: 2025-12-03
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LPM_090215.pdf"
 archived_copy: "https://web.archive.org/web/20250710012024/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LPM_090215.pdf"
 note: "Reglamento Abrogado Original DOF 31/10/2014 Reforma DOF 09/02/2015"

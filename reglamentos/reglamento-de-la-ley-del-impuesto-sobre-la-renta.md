@@ -7,6 +7,7 @@ language: es
 date: 2015-10-08
 last_amended: 2016-05-06
 status: repealed
+abrogated: 2015-10-08
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LISR_060516.pdf"
 archived_copy: "https://web.archive.org/web/20260702222816/http://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LISR_060516.pdf"
 note: "Original DOF 08/10/2015 Reforma DOF 06/05/2016"

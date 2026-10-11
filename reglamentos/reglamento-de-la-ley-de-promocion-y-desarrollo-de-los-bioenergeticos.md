@@ -4,8 +4,8 @@ identifier: "Reg_LPDB"
 type: regulation
 jurisdiction: mx
 language: es
-date: 2025-10-03
 status: repealed
+abrogated: 2025-10-03
 source: "https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LPDB.pdf"
 archived_copy: "https://web.archive.org/web/20240211193933/https://www.diputados.gob.mx/LeyesBiblio/regley/Reg_LPDB.pdf"
 note: "Reglamento Abrogado"
