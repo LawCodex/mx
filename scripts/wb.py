@@ -104,3 +104,12 @@ def cached(name, fetch):
         f.write(data)
     os.replace(path + ".part", path)
     return data
+
+
+def all_captures(path):
+    """All 200 captures of one file (any year), newest first: [(timestamp, original)]."""
+    url = ("https://web.archive.org/cdx/search/cdx?url=diputados.gob.mx/LeyesBiblio/" + path
+           + "&filter=statuscode:200&fl=original,timestamp")
+    r = _get(url, timeout=300)
+    caps = [tuple(reversed(l.split()[:2])) for l in r.text.splitlines() if len(l.split()) >= 2]
+    return sorted(caps, reverse=True)

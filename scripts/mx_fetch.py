@@ -156,19 +156,37 @@ def main():
         if data and data[:4] == b"%PDF":
             it["via"] = "origin"
         else:
-            if key not in snaps:
+            data = None
+            cands = [snaps[key]] if key in snaps else []
+
+            def more():
+                try:
+                    return [c for c in wb.all_captures(it["file"]) if c != snaps.get(key)]
+                except RuntimeError as e:
+                    print("CDXFAIL", e, flush=True)
+                    return []
+            tried = 0
+            while True:
+                if not cands:
+                    if tried:
+                        break
+                    tried = 1
+                    cands = more()[:6]
+                    if not cands:
+                        break
+                ts, orig = cands.pop(0)
+                try:
+                    d = wb.snapshot(ts, orig)
+                except RuntimeError as e:
+                    print("FAIL", e, flush=True)
+                    continue
+                if d[:4] == b"%PDF":
+                    data = d
+                    snaps[key] = (ts, orig)
+                    wb.cached(local + ".json", lambda: json.dumps([ts, orig]).encode())
+                    break
+            if data is None:
                 print("MISSING", it["file"], it["title"][:60], flush=True)
-                it["missing"] = True
-                return
-            ts, orig = snaps[key]
-            try:
-                data = wb.snapshot(ts, orig)
-            except RuntimeError as e:
-                print("FAIL", e, flush=True)
-                it["missing"] = True
-                return
-            if data[:4] != b"%PDF":
-                print("NOTPDF", it["file"], flush=True)
                 it["missing"] = True
                 return
         wb.cached(local, lambda: data)
@@ -179,7 +197,10 @@ def main():
     # annotate snapshot info for cached files too
     for it in items:
         key = it["file"].lower()
-        if "snapshot" not in it and key in snaps and it.get("via") != "origin":
+        side = os.path.join(wb.ROOT, it["local"] + ".json")
+        if os.path.exists(side):
+            snaps[key] = tuple(json.load(open(side)))
+        if "snapshot" not in it and key in snaps and it.get("via") != "origin" and not it.get("missing"):
             ts, orig = snaps[key]
             it["via"] = "wayback"
             it["wayback"] = f"https://web.archive.org/web/{ts}/{orig}"

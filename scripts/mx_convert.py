@@ -52,6 +52,7 @@ NUM = (r"\d+(?:\s*[oº°])?(?:[\s-]+" + SUFFIX + r"\b(?:\s*\d+(?![\d/]))?)*"
 ART_RE = re.compile(
     r"^(?P<label>(?:Art[íi]culo|ART[ÍI]CULO)\s+(?:" + NUM + "|" + ORD + r"(?:\s+" + ORD + r")?)(?![\w/]))"
     r"\s*(?P<dot>\.)?\s*(?:[-–—]+\s*)?(?P<rest>.*)$", re.S)
+LABEL_RE = re.compile(r"^([IVXLC]+\.|[a-zñ]\)|[A-Z]\)|\d{1,3}\.|Art[íi]culo \d|ART[ÍI]CULO \d)")
 TRANS_RE = re.compile(r"^(ART[ÍI]CULOS\s+)?TRANSITORIOS?(\s+DE\s+DECRETOS?\s+DE\s+REFORMAS?)?\.?$|"
                       r"^Transitorios?$|^ART[ÍI]CULOS?\s+TRANSITORIOS?(\s+DE\s+.*)?$", re.I)
 
@@ -64,6 +65,10 @@ def pdftext(path):
 
 def strip_page(page):
     lines = page.split("\n")
+    for j, ln in enumerate(lines[:14]):
+        if re.search(r"Secretar[íi]a de Servicios Parlamentarios", ln):
+            lines = lines[j + 1:]
+            break
     # header: within first ~10 non-empty lines, drop lines that match header patterns (or the
     # running law title which is right-aligned at the top)
     i, seen = 0, 0
@@ -155,6 +160,27 @@ def blocks(text):
         if j > 0:
             out.append(b[:j])
         out.append(["\x00NOTE" + re.sub(r"\s+", " ", " ".join(l.strip() for l in b[j:]))])
+    # split paragraphs inside blocks (some PDFs have no blank line between paragraphs)
+    out2 = []
+    lens = [len(b) for b in out if not b[0].startswith("\x00")]
+    dense = bool(lens) and sum(lens) / len(lens) > 6
+    for b in out:
+        if not dense or b[0].startswith("\x00") or len(b) < 2 or is_table(b):
+            out2.append(b)
+            continue
+        cur = [b[0]]
+        for ln in b[1:]:
+            ind = len(ln) - len(ln.lstrip())
+            prev = cur[-1]
+            pind = len(prev) - len(prev.lstrip())
+            if 2 <= ind <= 12 and (LABEL_RE.match(ln.strip()) or pind == 0
+                                   or re.search(r"[.;:]$", prev.rstrip())):
+                out2.append(cur)
+                cur = [ln]
+            else:
+                cur.append(ln)
+        out2.append(cur)
+    out = out2
     # join a lone structural heading line with the centred name block that follows it
     res, i = [], 0
     while i < len(out):
@@ -173,13 +199,15 @@ def blocks(text):
 
 
 def is_table(block):
-    gaps = 0
+    gaps, wide = 0, 0
     for ln in block:
-        s = ln.strip()
-        s = re.sub(r"^([IVXLC]+\.|[a-zñ]\)|\d+\.|[A-Z]\.|\d+\))\s{2,}", r"\1 ", s)
-        if len(re.findall(r"\S\s{3,}\S", s)) >= 1:
+        st = ln.strip()
+        st = re.sub(r"^([IVXLC]+\.-?|[a-zñ]\)\.?-?|\d+\.-?|[A-Z]\.-?|\d+\)|[a-zñ]\.-?)\s{2,}", r"\1 ", st)
+        if re.search(r"\S\s{3,}\S", st):
             gaps += 1
-    return gaps >= 2 and gaps >= len(block) / 2
+        if re.search(r"\S\s{10,}\S", st):
+            wide += 1
+    return gaps >= 2 and (gaps >= len(block) / 2 or wide >= 1)
 
 
 def flow(block):
@@ -297,6 +325,8 @@ def front(it, title):
     lines.append(f"source: {yaml_str(it['source'])}")
     if it.get("wayback"):
         lines.append(f"archived_copy: {yaml_str(it['wayback'])}")
+    if it.get("stale"):
+        lines.append("outdated: true  # archived copy predates the latest reform listed by the source")
     if it.get("note"):
         lines.append(f"note: {yaml_str(it['note'])}")
     lines.append(f"retrieved: {RETRIEVED}")
@@ -328,11 +358,26 @@ def outpath(it, used):
 
 
 def last_amended_from_text(text):
-    m = re.search(r"[ÚU]ltima reforma publicada DOF (\d\d)-(\d\d)-(\d{4})", text, re.I)
+    m = re.search(r"[ÚU]ltima reforma (?:publicada )?DOF\s+(\d\d)-(\d\d)-(\d{4})", text, re.I)
     if m:
         d, mth, y = m.groups()
         return f"{y}-{mth}-{d}"
     return None
+
+
+def latest_header_date(text):
+    """Latest date mentioned in the first page's title block (reforms, updated amounts,
+    SCJN declarations...): used to check the PDF is as recent as the index entry."""
+    page = text.split("\f")[0]
+    lines = [l for l in page.split("\n") if l.strip()][:30]
+    best = None
+    for l in lines:
+        if "DOF" not in l and "SCJN" not in l:
+            continue
+        for d, m, y in re.findall(r"(\d\d)[-/](\d\d)[-/](\d{4})", l):
+            v = f"{y}-{m}-{d}"
+            best = max(best or v, v)
+    return best
 
 
 def main():
@@ -352,10 +397,13 @@ def main():
             it["missing"] = True
             continue
         text = pdftext(src)
-        if not it.get("last_amended"):
-            la = last_amended_from_text(text)
-            if la:
-                it["last_amended"] = la
+        la = last_amended_from_text(text)
+        hd = latest_header_date(text) or la
+        if hd:
+            idx = it.get("last_amended")
+            it["stale"] = bool(idx and hd < idx and (not it.get("snapshot") or it["snapshot"] < idx))
+        if la or it.get("stale"):
+            it["last_amended"] = la
         title = pretty_title(it["title"])
         body = convert(text, title)
         dst = os.path.join(REPO, it["path"])
